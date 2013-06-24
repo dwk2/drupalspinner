@@ -1,7 +1,8 @@
 # HOW TO USE THIS EXAMPLE FILE: 
 # 1. copy this to ISLAND.ROOT.cfg and edit that file
 # 2. search for SETUP- and fill in the appropriate values (most are in the firs screen or two, but one or two appear later)
-# 3. search for SETUPNOTE- and read the notes and/or update the relevant info
+# 3. search for institution and replace it with the name for your institution (computer compatible - e.g. 'yourcollege' rather than 'Your College')
+# 4. search for SETUPNOTE- and read the notes and/or update the relevant info
 
 drupal_root_dir="SETUP-drupal-install-dir" # e.g. /opt/web/drupal
 spinner_root_dir="SETUP-drupalspinner-dir" # e.g. /opt/drupalspinner
