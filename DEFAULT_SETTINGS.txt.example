@@ -1,0 +1,69 @@
+<?php
+
+# TO USE THIS EXAMPLE FILE:
+# 1. copy is to DEFAULT_SETTINGS.txt
+# 2. search for SETUP- and fill in appropriate values
+
+/**
+ * @file
+ * Drupal site-specific configuration file.
+ *
+ * This file was put in place by the drupalspinner tool. It is a stripped-down version of the standard
+ * settings file - it just has all the comments and commented out settings removed.
+ *
+ * The main feauture of this file is that it links the users, sessions, roles, and auth mode (and ldap)
+ * tables of the new multi-site instance to the primary site in the install.
+ */
+
+/**
+ * Database settings:
+ */
+$databases = array (
+  'default' => 
+  array (
+    'default' => 
+    array (
+      'database' => '$dbname',
+      'username' => '$dbuser',
+      'password' => '$dbpass',
+      'host' => '$dbhost',
+      'port' => '',
+      'driver' => 'mysql',
+      'prefix' => array(
+        'default'   => ''
+        ,'users'               => 'drupal_prime.'
+        ,'sessions'            => 'drupal_prime.'
+        ,'role'                => 'drupal_prime.'
+        ,'role_permission'     => 'drupal_prime.'
+        ,'authmap'             => 'drupal_prime.'
+        ,'ldap_authorization'  => 'drupal_prime.'
+        ,'ldap_servers'        => 'drupal_prime.'
+      ), 
+    ),
+  ),
+);
+
+
+/**
+ * Access control for update.php script.
+ */
+$update_free_access = FALSE;
+
+/**
+ * Salt for one-time login links and cancel links, form tokens, etc.
+ */
+$drupal_hash_salt = 'SETUP-put-a-salt-string-here' # e.g. 8g9f7h5j4636a987v879q34h13jkn5.2rnkr1098.asdfpiow-asdf4rhluij3eqrn
+
+/**
+ * PHP settings:
+ */
+ini_set('session.gc_probability', 1);
+ini_set('session.gc_divisor', 100);
+ini_set('session.gc_maxlifetime', 200000);
+ini_set('session.cookie_lifetime', 2000000);
+
+ * Fast 404 pages:
+ */
+$conf['404_fast_paths_exclude'] = '/\/(?:styles)\//';
+$conf['404_fast_paths'] = '/\.(?:txt|png|gif|jpe?g|css|js|ico|swf|flv|cgi|bat|pl|dll|exe|asp)$/i';
+$conf['404_fast_html'] = '<html xmlns="http://www.w3.org/1999/xhtml"><head><title>404 Not Found</title></head><body><h1>Not Found</h1><p>The requested URL "@path" was not found on this server.</p></body></html>';

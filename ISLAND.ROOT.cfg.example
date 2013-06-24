@@ -1,0 +1,270 @@
+# HOW TO USE THIS EXAMPLE FILE: 
+# 1. copy this to ISLAND.ROOT.cfg and edit that file
+# 2. search for SETUP- and fill in the appropriate values (most are in the firs screen or two, but one or two appear later)
+# 3. search for SETUPNOTE- and read the notes and/or update the relevant info
+
+drupal_root_dir="SETUP-drupal-install-dir" # e.g. /opt/web/drupal
+spinner_root_dir="SETUP-drupalspinner-dir" # e.g. /opt/drupalspinner
+
+#***set up site credentials.***
+
+# this is information about general system architecture/organization
+drupal_base_hostname="SETUP-hostname-of-drupal-machine" # e.g. drsites.institution.edu
+
+# this is the same for each site - this is the user and pass that the creation script uses to generate new sites
+dbhost="air-db2.williams.edu"
+# SETUPNOTE- this user must have full DB permissions - i.e. the ability to create new databases and to grant other users access to those databases
+dbcreator="drupal_spinner"
+dbcreator_pass="SETUP-password-for-drupal_spinner-account" 
+
+# this is the same for each site - these are how the newly created site uses to access the DB and the repository
+# SETUPNOTE- this user needs to exist in the database; use this account when setting up the primary drupal install
+dbuser="drupal_user"
+dbpass="SETUP-password-for-drupal_user-account"
+
+fedora="SETUP-fedora-url" # e.g. http://fedora.institution.edu:8080/fedora
+
+ispid="islandora:root"
+
+##########################################################
+# values for non-islandora config settings common to each site
+
+# google analytics
+googleanalytics_web_property_id="SETUP-google-analytics-API-key" # e.g. UA-12345678-1
+# NOTE: other settings just use the defaults
+
+
+# nice menus
+nice_menu_menu_comp_name="menu-institution-menu"
+nice_menu_menu_human_name="Nice menu 1"
+nice_menu_num_nice_menu_blocks="2"
+nice_menu_use_nice_menu_js="1"
+nice_menu_depth="-1"
+nice_menu_mouse_delay="800"
+nice_menu_animation_speed="fast"
+nice_menu_type="down"
+
+
+# image magick
+imagemagick_image_toolkit="imagemagick"
+imagemagick_image_quality="75"
+# SETUPNOTE- may need to update this path to reflect your local install
+imagemagick_path_to_convert="/usr/bin/convert"
+# Q?? unused? can't find in variable table
+imagemagick_enable_graphicsmagick="0"
+
+
+# quick tabs
+# NONE/DEFAULT
+
+# quick tabs styles
+# 
+quicktabs_tabstyle="nostyle"
+# Q?? unused? can't find in variable table
+
+
+##########################################################
+# values for islandora config settings common to each site
+
+# DEF: dsid => data stream ID
+
+# core
+default_collection_objects_per_page="50"
+disable_delete_policy="1"
+default_view_style="grid"
+namespace_restriction_enforced="1"
+
+# audio collection
+# SETUPNOTE- may need to update this path to reflect your local install
+path_to_lame="/usr/local/bin/lame"
+default_audio_viewer="islandora_jwplayer"
+
+# book collection
+parent_book_pid_solr_field="RELS_EXT_isMemberOf_uri_ms"
+book_viewer="islandora_internet_archive_bookreader"
+page_viewer="islandora_openseadragon"
+
+# bookmarks
+bookmarks_overview="10"
+bookmarks_detail="10"
+
+# fits
+# SETUPNOTE- may need to update this path to reflect your local install
+path_to_fits="/opt/fits/fits.sh"
+dsid_tech_meta="TECHMD"
+
+# form_associations
+audio_mods_content_model="islandora:sp-audioCModel"
+audio_mods_type="Built-in"
+audio_mods_dsid="MODS"
+audio_mods_title_field="['titleInfo']['title']"
+audio_mods_transform="mods_to_dc.xsl"
+audio_mods_has_template="0"
+
+basic_mods_image_content_model="islandora:sp_basic_image"
+basic_mods_image_type="Built-in"
+basic_mods_image_dsid="MODS"
+basic_mods_image_title_field="['titleInfo']['title']"
+basic_mods_image_transform="mods_to_dc.xsl"
+basic_mods_image_has_template="0"
+
+book_mods_content_model="islandora:bookCModel"
+book_mods_type="Built-in"
+book_mods_dsid="MODS"
+book_mods_title_field="['titleInfo']['title']"
+book_mods_transform="mods_to_dc.xsl"
+book_mods_has_template="0"
+
+large_image_mods_content_model="islandora:sp_large_image_cmodel"
+large_image_mods_type="Built-in"
+large_image_mods_dsid="MODS"
+large_image_mods_title_field="['titleInfo']['title']"
+large_image_mods_transform="mods_to_dc.xsl"
+large_image_mods_has_template="0"
+
+pdf_mods_content_model="islandora:sp_pdf"
+pdf_mods_type="Built-in"
+pdf_mods_dsid="MODS"
+pdf_mods_title_field="['titleInfo']['title']"
+pdf_mods_transform="mods_to_dc.xsl"
+pdf_mods_has_template="0"
+
+video_mods_content_model="islandora:sp_videoCModel"
+video_mods_type="Built-in"
+video_mods_dsid="MODS"
+video_mods_title_field="['titleInfo']['title']"
+video_mods_transform="mods_to_dc.xsl"
+video_mods_has_template="0"
+
+# internet archive book reader
+djakota_img_compression="4"
+book_pid_solr_field="rels.isMemberOf"
+
+# batch settings
+# SETUPNOTE- may need to update this path to reflect your local install
+path_to_java="/usr/bin/java"
+
+# xacml
+save_relationships="1"
+viewable_by_role_solr_field="rels.isViewableByRole"
+viewable_by_user_solr_field="rels.isViewableByUser"
+
+# large image collection
+lossless_derivative="0"
+use_kadaku="1"
+uncompress_tiffs="1"
+# SETUPNOTE- may need to update this path to reflect your local install
+path_to_kadaku="/usr/bin/kdu_compress"
+large_image_viewer="islandora_openseadragon"
+
+# OCR tool
+# SETUPNOTE- may need to update this path to reflect your local install
+path_to_tesseract="/usr/local/bin/tesseract"
+lang_dan_frak="0"
+lang_deu_frak="0"
+lang_deu="0"
+lang_eng="1"
+lang_fra="1"
+lang_hin="0"
+lang_ita="1"
+lang_ita_old="0"
+lang_jpn="1"
+lang_por="1"
+lang_rus="0"
+lang_slk_frak="0"
+lang_spa="1"
+lang_spa_old="0"
+islandora_ocr_solr_hocr_highlighting_use_fast="1"
+ocr_text_solr_field="text_nodes_HOCR_hlt"
+solr_query_max_results="32"
+
+# open seadragon
+sd_debug_mode="0"
+sd_animation_time="1.5"
+sd_blend_time="0.1"
+sd_always_blend="0"
+sd_auto_hide_controls="1"
+sd_immediate_render="0"
+sd_wrap_horizontal="0"
+sd_wrap_vertical="0"
+sd_wrap_overlays="0"
+sd_pan_horizonal="1"
+sd_pan_vertical="1"
+sd_zoom_img_ratio_min="0.8"
+sd_zoom_pix_ratio_max="2"
+sd_vis_ratio="0.5"
+sd_sprin_stiffness="5.0"
+sd_img_loader_limit="5"
+sd_click_time_thresh="300"
+sd_click_dist_thresh="5"
+sd_zoom_per_click="2.0"
+sd_zoom_per_scroll="1.2"
+sd_zoom_per_second="2.0"
+sd_tile_size="256"
+sd_tile_overlap="0"
+
+# paged content
+# SETUPNOTE- may need to update this path to reflect your local install
+path_to_ghostscript="/usr/bin/gs"
+# SETUPNOTE- may need to update this path to reflect your local install
+djakota_url="http://localhost:8080/adore-djatoka/"
+page_seq_solr_field="RELS_EXT_isSequenceNumber_literal_ms"
+
+# pdf
+# SETUPNOTE- may need to update this path to reflect your local install
+path_pdftotext="/usr/bin/pdftotext"
+allow_upload_text_with_pdf="1"
+store_extracted_text="0"
+thumbnail_width="200"
+thumbnail_height="200"
+preview_max_width="500"
+preview_max_height="700"
+
+# simple workflow
+# NOTHING
+
+# solr
+solr_url="SETUP-address-for-fedora-solr" # e.g. fedora.institution.edu:8080/solr
+solr_req_handler="standard"
+solr_base_filter=""
+solr_base_query="*:*"
+solr_base_sort=""
+solr_content_model_field="RELS_EXT_hasModel_uri_ms"
+solr_datastream_id_field="fedora_datastreams_ms"
+solr_debug_mode="0"
+solr_dismax_allowed="1"
+solr_facet_max_limit="20"
+solr_facet_min_limit="2"
+solr_facet_soft_limit="10"
+solr_limit_result_fields="1" #
+solr_num_of_results="20"
+solr_object_label_field="fgs_label_s"
+solr_primary_display="default"
+# not sure how to set this one...
+#solr_primary_display_table=""
+solr_request_handler="standard"
+solr_search_boolean="user"
+# not sure how to set this one...
+#solr_secondary_display=""
+solr_tabs__active_tab="edit-default-display-settings"
+
+# tabs
+tabs__active_tab="edit-islandora-general"
+
+# solution packs
+# ???: no explicit config needed?
+
+# video sol pack
+default_video_viewer="islandora_jwplayer"
+keep_originals_after_ingest="1"
+# SETUPNOTE- may need to update this path to reflect your local install
+path_to_ffmpeg="/usr/local/bin/ffmpeg"
+create_mkv="1"
+create_mp4="1"
+# SETUPNOTE- may need to update this path to reflect your local install
+path_to_theora="/usr/bin/ffmpeg2theora"
+create_ocg="1"
+create_thumbnail="1"
+
+
+echo "spinner root data loaded..."

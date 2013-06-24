@@ -1,0 +1,301 @@
+#!/bin/bash
+
+# TO USE THIS:
+# 0. have a working primary drupal install and have the ISLAND.ROOT.cfg file set up
+# 1. copy ISLAND.BASE.cfg to ISLAND.site.newsiteidentifier.cfg and set the appropriate config data in that file
+# 2. $ makeisland newsiteidentifier
+
+usage="makeisland newsiteidentifier"
+
+if [ "$1" == "" ]
+  then
+    echo "missing newsiteidentifier"
+    echo "USAGE: $usage";
+    exit 0
+fi
+
+if [ ! -f ISLAND.$1.cfg ]
+  then
+    echo "missing file ISLAND.$1.cfg"
+    exit 0
+fi
+
+source ISLAND.ROOT.cfg
+source ISLAND.site.$1.cfg
+island="$drupal_base_hostname.$island_raw"
+
+echo "creating new site $island"
+
+cd $drupal_root_dir
+
+#***this is the drush command that sets up the new site and database.  This actually does the bulk of the work.***
+drush site-install standard --sites-subdir=$island --site-name=$island_raw  --db-su=$dbcreator --db-su-pw=$dbcreator_pass --db-url=mysql://$dbuser:$dbpass@$dbhost/$dbname
+
+
+#************************************************
+#***this all should actually happen in the make script and install profile, because these items only have to be installed and enabled once for each group of multi-sites.  I just left it here because it's handy if you need to roll out a new test multi-site***
+
+#get dependencies
+#drush dl -y views
+#drush dl -y ctools
+#drush dl -y imagemagick
+#drush dl -y admin_menu
+#drush dl -y ldap
+
+#get & unpack the islandora modules
+#cd sites/all/modules/ 
+#wget http://islandora.ca/sites/islandora.ca/files/7.x-1.0/islandora-7.x-1.0.tar.gz
+#wget http://islandora.ca/sites/islandora.ca/files/7.x-1.0/islandora_forms-7.x-1.0.tar.gz
+#wget http://islandora.ca/sites/islandora.ca/files/7.x-1.0/islandora_solution_pack_pdf-7.x-1.0.tar.gz
+#wget http://islandora.ca/sites/islandora.ca/files/7.x-1.0/islandora_solution_pack_image-7.x-1.0.tar.gz
+#wget http://islandora.ca/sites/islandora.ca/files/7.x-1.0/islandora_solution_pack_collection-7.x-1.0.tar.gz
+#wget http://islandora.ca/sites/islandora.ca/files/7.x-1.0/islandora_solr_views-7.x-1.0.tar.gz
+#wget http://islandora.ca/sites/islandora.ca/files/7.x-1.0/islandora_search-7.x-1.0.tar.gz
+
+#tar -zxf islandora-7.x-1.0.tar.gz
+#tar -zxf islandora_forms-7.x-1.0.tar.gz
+#tar -zxf islandora_solution_pack_pdf-7.x-1.0.tar.gz
+#tar -zxf islandora_solution_pack_image-7.x-1.0.tar.gz
+#tar -zxf islandora_solution_pack_collection-7.x-1.0.tar.gz
+#tar -zxf islandora_solr_views-7.x-1.0.tar.gz
+#tar -zxf islandora_search-7.x-1.0.tar.gz
+
+#get the theme. suggesting pixture_reloaded as the base theme because it's adaptive and works with color module.
+#cd ../../../
+#drush dl -y adaptivetheme
+#drush dl -y pixture_reloaded
+#**********************************************
+
+#***putting this bit in here to see if it resolves any issues that might be due to islandora storing existing collection data in an xml file in the shared module directory
+
+#chmod -R 775 sites/$island
+#cd sites/$island
+
+#mkdir modules
+#cd modules
+#wget http://islandora.ca/sites/islandora.ca/files/7.x-1.0/islandora_solution_pack_collection-7.x-1.0.tar.gz
+#tar -zxvf islandora_solution_pack_collection-7.x-1.0.tar.gz
+#cd ../../../
+
+
+#############################################################################
+#***we do need to enable the islandora pre-req modules for each multisite***
+#############################################################################
+drush -l $island en -y views
+drush -l $island en -y views_slideshow
+drush -l $island en -y views_slideshow_cycle
+drush -l $island en -y views_ui
+# no views vars found
+
+drush -l $island en -y imagemagick
+##
+drush -l $island vset  imagemagick_convert "$imagemagick_path_to_convert"
+drush -l $island vset  image_jpeg_quality "$imagemagick_image_quality"
+drush -l $island vset  image_toolkit "$imagemagick_image_toolkit"
+# no graphicsmagick enable flag var? drush -l $island vset  "$"
+
+drush -l $island en -y libraries
+# no libraries vars found
+
+drush -l $island en -y quicktabs
+drush -l $island en -y quicktabs_tabstyles
+# no quicktabs vars found
+
+#############################################################################
+#***enable the LDAP auth modules
+#############################################################################
+drush -l $island en -y ldap_authentication*
+drush -l $island en -y ldap_server
+drush -l $island en -y ldap_ad_*
+# these are handled by enabling the williams_ldap module below - that modules sets the relevant variables when it is enabled
+
+#############################################################################
+#***use drush vset to insert islandora credentials into the database***this evidently needs to be done BEFORE the islandora modules are enabled**
+#############################################################################
+drush -l $island vset islandora_base_url "$fedora"
+drush -l $island vset islandora_repository_pid "$ispid"
+drush -l $island vset islandora_namespace_restriction_enforced 1
+
+#############################################################################
+#***enable islandora and other modules (plus related settings) for each individual island***
+#############################################################################
+drush -l $island en -y islandora
+
+drush -l $island en -y php_lib
+drush -l $island en -y objective_forms
+drush -l $island en -y xml_form_api, xml_form_builder, xml_form_elements, xml_schema_api
+drush -l $island en -y islandora_basic_image
+drush -l $island en -y xml_forms
+
+drush -l $island en -y islandora_audio
+##
+drush -l $island vset islandora_audio_viewers "$default_audio_viewer"
+drush -l $island vset islandora_lame_url "$path_to_lame"
+
+drush -l $island en -y islandora-batch
+drush -l $island en -y islandora-importer
+
+drush -l $island en -y islandora-book-batch
+drush -l $island en -y islandora-book
+##
+#drush -l $island vset islandora_book_ingest_derivatives "$"
+drush -l $island vset islandora_book_page_viewers "$page_viewer"
+drush -l $island vset islandora_book_parent_book_solr_field "$parent_book_pid_solr_field"
+drush -l $island vset islandora_book_tesseract "$path_to_tesseract"
+drush -l $island vset islandora_book_viewers "$book_viewer"
+
+drush -l $island en -y islandora-bookmark
+drush -l $island en -y islandora_internet_archive_bookreader
+drush -l $island en -y islandora_jwplayer
+
+drush -l $island en -y islandora_large_image
+##
+drush -l $island vset islandora_kakadu_url "$path_to_kadaku"
+drush -l $island vset islandora_large_image_viewers "$large_image_viewer"
+drush -l $island vset islandora_use_kakadu "$use_kadaku"
+
+drush -l $island en -y islandora_ocr
+##
+drush -l $island vset islandora_ocr_solr_hocr_highlighting_field "$ocr_text_solr_field"
+drush -l $island vset islandora_ocr_solr_hocr_highlighting_use_fas "$islandora_ocr_solr_hocr_highlighting_use_fast"
+drush -l $island vset islandora_ocr_solr_hocr_result_count "$solr_query_max_results"
+drush -l $island vset islandora_ocr_tesseract "$path_to_tesseract"
+#drush -l $island vset islandora_ocr_tesseract_enabled_languages "$"
+# multi-value variable - hash? - see http://drush.ws/#variable-set for example, perhaps...
+# drush -l $island vset --format=json islandora_ocr_tesseract_enabled_languages "{'':,'':,'':,'':,'':}"
+
+drush -l $island en -y islandora_openseadragon
+
+drush -l $island en -y islandora_paged_content
+##
+drush -l $island vset islandora_paged_content_gs "$path_to_ghostscript"
+
+drush -l $island en -y islandora_video
+##
+drush -l $island vset islandora_video_ffmpeg2theora_path "$path_to_theora"
+drush -l $island vset islandora_video_ffmpeg_path "$path_to_ffmpeg"
+drush -l $island vset islandora_video_make_archive "$create_mkv"
+drush -l $island vset islandora_video_make_mp4_locally "$create_mp4"
+drush -l $island vset islandora_video_make_ogg_locally "$create_ocg"
+drush -l $island vset islandora_video_make_thumbnail_locally "$create_thumbnail"
+drush -l $island vset islandora_video_retain_original "$keep_originals_after_ingest"
+drush -l $island vset islandora_video_viewers "$default_video_viewer"
+
+
+drush -l $island en -y islandora_xacml_api
+drush -l $island en -y islandora_xacml_editor
+drush -l $island en -y willdora
+drush -l $island en -y zip_importer
+
+drush -l $island en -y islandora_pdf
+##
+drush -l $island vset islandora_pdf_allow_text_upload "$allow_upload_text_with_pdf"
+drush -l $island vset islandora_pdf_create_fulltext "$store_extracted_text"
+drush -l $island vset islandora_pdf_path_to_pdftotext "$path_pdftotext"
+drush -l $island vset islandora_pdf_preview_height "$preview_max_height"
+drush -l $island vset islandora_pdf_preview_width "$preview_max_width"
+drush -l $island vset islandora_pdf_thumbnail_height "$thumbnail_height"
+drush -l $island vset islandora_pdf_thumbnail_width "$thumbnail_width"
+
+drush -l $island en -y islandora_basic_collection
+
+drush -l $island en -y islandora_solr
+drush -l $island en -y islandora_solr_config
+drush -l $island en -y islandora_solr_views
+##
+drush -l $island vset islandora_solr_base_filter "$solr_base_filter"
+drush -l $island vset islandora_solr_base_query "$solr_base_query"
+drush -l $island vset islandora_solr_base_sort "$solr_base_sort"
+drush -l $island vset islandora_solr_content_model_field "$solr_content_model_field"
+drush -l $island vset islandora_solr_datastream_id_field "$solr_datastream_id_field"
+drush -l $island vset islandora_solr_debug_mode "$solr_debug_mode"
+drush -l $island vset islandora_solr_dismax_allowed "$solr_dismax_allowed"
+drush -l $island vset islandora_solr_facet_max_limit "$solr_facet_max_limit"
+drush -l $island vset islandora_solr_facet_min_limit "$solr_facet_min_limit"
+drush -l $island vset islandora_solr_facet_soft_limit "$solr_facet_soft_limit"
+drush -l $island vset islandora_solr_limit_result_fields "$solr_limit_result_fields"
+drush -l $island vset islandora_solr_namespace_restriction "$solr_namespace_restriction"
+drush -l $island vset islandora_solr_num_of_results "$solr_num_of_results"
+drush -l $island vset islandora_solr_object_label_field "$solr_object_label_field"
+drush -l $island vset islandora_solr_primary_display "$solr_primary_display"
+# not sure how/what to set - wacky multi-part value
+#drush -l $island vset islandora_solr_primary_display_table "$"
+drush -l $island vset islandora_solr_query_fields "$solr_query_fields"
+drush -l $island vset islandora_solr_request_handler "$solr_req_handler"
+drush -l $island vset islandora_solr_search_boolean "$solr_search_boolean"
+# not sure how/what to set - wacky multi-part value
+#drush -l $island vset islandora_solr_secondary_display "$"
+drush -l $island vset islandora_solr_tabs__active_tab "$solr_tabs__active_tab"
+drush -l $island vset islandora_solr_url "$solr_url"
+
+
+
+drush -l $island vset islandora_tabs__active_tab "$tabs__active_tab"
+
+
+drush -l $island en -y islandora_fits
+##
+drush -l $island vset islandora_fits_executable_path "$path_to_fits"
+drush -l $island vset islandora_fits_techmd_dsid "$dsid_tech_meta"
+
+drush -l $island en -y islandora_simple_workflow
+
+drush -l $island en -y nice_menus
+##
+drush -l $island vset nice_menus_depth_1 $nice_menu_depth
+drush -l $island vset  nice_menus_js $nice_menu_use_nice_menu_js
+drush -l $island vset nice_menus_menu_1 $nice_menu_menu_comp_name
+drush -l $island vset nice_menus_name_1 $nice_menu_menu_human_name
+drush -l $island vset nice_menus_number $nice_menu_num_nice_menu_blocks
+drush -l $island vset nice_menus_sf_delay $nice_menu_mouse_delay
+drush -l $island vset nice_menus_sf_speed $nice_menu_animation_speed
+drush -l $island vset nice_menus_type_1 $nice_menu_type
+
+
+drush -l $island en -y googleanalytics
+##
+drush -l $island vset googleanalytics_account $googleanalytics_web_property_id
+# NOTE: other google analytics settings just use the defaults
+
+drush -l $island vset islandora_batch_java "$path_to_java"
+
+
+
+
+#############################################################################
+#***enabling this module sets needed LDAP config data
+#############################################################################
+drush -l $island en -y williams_ldap
+# NOTE: SETUPNOTE- this is specific to Williams college; enabling this module causes variious ldap-related values to be set in the DB
+
+
+#############################################################################
+#***default theme settings - this enables the WilliamsBaseD7 theme and sets it as default***
+#############################################################################
+drush -l $island en -y WilliamsBaseD7
+drush -l $island vset theme_default WilliamsBaseD7
+# NOTE: SETUPNOTE- this is (currently) specific to Williams college; ideally this would be a generic islandora-compatible theme that could be easily customized to your institution and each site/project
+
+
+
+#############################################################################
+#***custom settings file to use shared tables.  This relies on having the DEFAULT_SETTINGS.txt file in the root of the main install.  May need to tweak the permissions and file ownership here as well***
+#############################################################################
+chmod -R 775 sites/$island
+rm  sites/$island/settings.php
+cat $spinner_root_dir/DEFAULT_SETTINGS.txt | sed -e 's/$dbname/'"$dbname"'/' | sed -e 's/$dbuser/'"$dbuser"'/' | sed -e 's/$dbhost/'"$dbhost"'/' | sed -e 's/$dbpass/'"$dbpass"'/' >  sites/$island/settings.php
+
+
+#############################################################################
+#***create the symlink that makes the subdomain url work
+#############################################################################
+ln -s . $island_raw
+
+
+###!!!***TO DO - fix web-access permissions!  this is probably at least partially on the islandora/fedora side
+###!!!***TO DO - other modules or default configurations?  could save various views or other stuctures as features and add them to this script
+###!!!***TO DO - create a make script that will set up a new multisite environment with all the necessary scripts and modules
+###!!!***TO DO - pass variable to restrict collection to appropriate namespace
+
+###!!!***TO DO - define and process meta-data strutures (i.e. site config file defines metadata structures, and that info is used to create (and possibly remotely update) the necessary fedora config entries)
+
