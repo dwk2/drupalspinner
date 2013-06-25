@@ -240,13 +240,8 @@ solr_facet_soft_limit="10"
 solr_limit_result_fields="1" #
 solr_num_of_results="20"
 solr_object_label_field="fgs_label_s"
-solr_primary_display="default"
-# not sure how to set this one...
-#solr_primary_display_table=""
 solr_request_handler="standard"
 solr_search_boolean="user"
-# not sure how to set this one...
-#solr_secondary_display=""
 solr_tabs__active_tab="edit-default-display-settings"
 
 # tabs

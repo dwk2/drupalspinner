@@ -129,7 +129,7 @@ drush -l $island en -y xml_forms
 
 drush -l $island en -y islandora_audio
 ##
-drush -l $island vset islandora_audio_viewers "$default_audio_viewer"
+drush -l $island vset --format=json islandora_audio_viewers '{"name":{"none":"none","$default_audio_viewer":"$default_audio_viewer"},"default":"$default_audio_viewer"}'
 drush -l $island vset islandora_lame_url "$path_to_lame"
 
 drush -l $island en -y islandora-batch
@@ -138,11 +138,11 @@ drush -l $island en -y islandora-importer
 drush -l $island en -y islandora-book-batch
 drush -l $island en -y islandora-book
 ##
-#drush -l $island vset islandora_book_ingest_derivatives "$"
-drush -l $island vset islandora_book_page_viewers "$page_viewer"
+drush -l $island vset --format=json islandora_book_ingest_derivatives '{"pdf":"pdf","image":"image","ocr":"ocr"}'
+drush -l $island vset --format=json islandora_book_page_viewers '{"name":{"none":"none","$page_viewer":"$page_viewer"},"default":"$page_viewer"}'
 drush -l $island vset islandora_book_parent_book_solr_field "$parent_book_pid_solr_field"
 drush -l $island vset islandora_book_tesseract "$path_to_tesseract"
-drush -l $island vset islandora_book_viewers "$book_viewer"
+drush -l $island vset --format=json islandora_book_viewers '{"name":{"none":"none","$book_viewer":"$book_viewer"},"default":"$book_viewer"}'
 
 drush -l $island en -y islandora-bookmark
 drush -l $island en -y islandora_internet_archive_bookreader
@@ -151,7 +151,7 @@ drush -l $island en -y islandora_jwplayer
 drush -l $island en -y islandora_large_image
 ##
 drush -l $island vset islandora_kakadu_url "$path_to_kadaku"
-drush -l $island vset islandora_large_image_viewers "$large_image_viewer"
+drush -l $island vset --format=json islandora_large_image_viewers '{"name":{"none":"none","$large_image_viewer":"$large_image_viewer"},"default":"$large_image_viewer"}'
 drush -l $island vset islandora_use_kakadu "$use_kadaku"
 
 drush -l $island en -y islandora_ocr
@@ -160,9 +160,9 @@ drush -l $island vset islandora_ocr_solr_hocr_highlighting_field "$ocr_text_solr
 drush -l $island vset islandora_ocr_solr_hocr_highlighting_use_fas "$islandora_ocr_solr_hocr_highlighting_use_fast"
 drush -l $island vset islandora_ocr_solr_hocr_result_count "$solr_query_max_results"
 drush -l $island vset islandora_ocr_tesseract "$path_to_tesseract"
-#drush -l $island vset islandora_ocr_tesseract_enabled_languages "$"
-# multi-value variable - hash? - see http://drush.ws/#variable-set for example, perhaps...
-# drush -l $island vset --format=json islandora_ocr_tesseract_enabled_languages "{'':,'':,'':,'':,'':}"
+drush -l  $island vset --format=json islandora_ocr_tesseract_enabled_languages "{'deu-frak':'$lang_deu_frak','eng':'$lang_eng','fra':'$lang_fra','ita':'$lang_ita','jpn':'$lang_jpn','por':'$lang_por','spa':'$lang_spa','dan-frak':'$lang_dan_frak','deu':'$lang_deu','hin':'$lang_hin','ita_old':'$lang_ita_old','rus':'$lang_rus','slk-frak':'$lang_slk_frak','spa_old':'$lang_spa_old'}"
+
+
 
 drush -l $island en -y islandora_openseadragon
 
@@ -179,7 +179,7 @@ drush -l $island vset islandora_video_make_mp4_locally "$create_mp4"
 drush -l $island vset islandora_video_make_ogg_locally "$create_ocg"
 drush -l $island vset islandora_video_make_thumbnail_locally "$create_thumbnail"
 drush -l $island vset islandora_video_retain_original "$keep_originals_after_ingest"
-drush -l $island vset islandora_video_viewers "$default_video_viewer"
+drush -l $island vset --format=json islandora_video_viewers '{"name":{"none":"none","$default_video_viewer":"$default_video_viewer"},"default":"$default_video_viewer"}'
 
 
 drush -l $island en -y islandora_xacml_api
@@ -218,13 +218,11 @@ drush -l $island vset islandora_solr_namespace_restriction "$solr_namespace_rest
 drush -l $island vset islandora_solr_num_of_results "$solr_num_of_results"
 drush -l $island vset islandora_solr_object_label_field "$solr_object_label_field"
 drush -l $island vset islandora_solr_primary_display "$solr_primary_display"
-# not sure how/what to set - wacky multi-part value
-#drush -l $island vset islandora_solr_primary_display_table "$"
+drush -l $island vset islandora_solr_primary_display_table --format=json '{"weight":{"bookmark":"0","default":"0","grid":"0","table":"0"},"default":"default","enabled":{"bookmark":0,"default":"default","grid":0,"table":0}}'
 drush -l $island vset islandora_solr_query_fields "$solr_query_fields"
 drush -l $island vset islandora_solr_request_handler "$solr_req_handler"
 drush -l $island vset islandora_solr_search_boolean "$solr_search_boolean"
-# not sure how/what to set - wacky multi-part value
-#drush -l $island vset islandora_solr_secondary_display "$"
+drush -l $island vset islandora_solr_secondary_display --format=json '{"csv":0}'
 drush -l $island vset islandora_solr_tabs__active_tab "$solr_tabs__active_tab"
 drush -l $island vset islandora_solr_url "$solr_url"
 
