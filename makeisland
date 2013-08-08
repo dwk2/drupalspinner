@@ -14,7 +14,7 @@ if [ "$1" == "" ]
     exit 0
 fi
 
-if [ ! -f ISLAND.$1.cfg ]
+if [ ! -f ISLAND.site.$1.cfg ]
   then
     echo "missing file ISLAND.$1.cfg"
     exit 0
@@ -85,6 +85,7 @@ drush -l $island en -y views
 drush -l $island en -y views_slideshow
 drush -l $island en -y views_slideshow_cycle
 drush -l $island en -y views_ui
+drush -l $island en -y admin_menu
 # no views vars found
 
 drush -l $island en -y imagemagick
@@ -132,10 +133,10 @@ drush -l $island en -y islandora_audio
 drush -l $island vset --format=json islandora_audio_viewers '{"name":{"none":"none","$default_audio_viewer":"$default_audio_viewer"},"default":"$default_audio_viewer"}'
 drush -l $island vset islandora_lame_url "$path_to_lame"
 
-drush -l $island en -y islandora-batch
 drush -l $island en -y islandora-importer
-
+drush -l $island en -y islandora-batch
 drush -l $island en -y islandora-book-batch
+# FIX NOTE: some batch stuff not enabled: "Islandora Batch", "Islandora Book Batch"
 drush -l $island en -y islandora-book
 ##
 drush -l $island vset --format=json islandora_book_ingest_derivatives '{"pdf":"pdf","image":"image","ocr":"ocr"}'
@@ -145,6 +146,8 @@ drush -l $island vset islandora_book_tesseract "$path_to_tesseract"
 drush -l $island vset --format=json islandora_book_viewers '{"name":{"none":"none","$book_viewer":"$book_viewer"},"default":"$book_viewer"}'
 
 drush -l $island en -y islandora-bookmark
+# FIX NOTE: islandora-bookmark not enabled
+
 drush -l $island en -y islandora_internet_archive_bookreader
 drush -l $island en -y islandora_jwplayer
 
@@ -153,6 +156,7 @@ drush -l $island en -y islandora_large_image
 drush -l $island vset islandora_kakadu_url "$path_to_kadaku"
 drush -l $island vset --format=json islandora_large_image_viewers '{"name":{"none":"none","$large_image_viewer":"$large_image_viewer"},"default":"$large_image_viewer"}'
 drush -l $island vset islandora_use_kakadu "$use_kadaku"
+# FIX NOTE: default setting for viewer is NOT working
 
 drush -l $island en -y islandora_ocr
 ##
@@ -270,9 +274,14 @@ drush -l $island en -y williams_ldap
 #############################################################################
 #***default theme settings - this enables the WilliamsBaseD7 theme and sets it as default***
 #############################################################################
-drush -l $island en -y WilliamsBaseD7
-drush -l $island vset theme_default WilliamsBaseD7
+# consider the bootstrap theme
+# garland theme is the default - use that
+drush -l $island en -y williams_base
+drush -l $island vset theme_default williams_base
 # NOTE: SETUPNOTE- this is (currently) specific to Williams college; ideally this would be a generic islandora-compatible theme that could be easily customized to your institution and each site/project
+drush -l $island vset theme_settings --format=json '{"toggle_logo":1,"toggle_name":0,"toggle_slogan":0,"toggle_node_user_picture":0,"toggle_comment_user_picture":0,"toggle_comment_user_verification":0,"toggle_favicon":0,"toggle_main_menu":1,"toggle_secondary_menu":1,"default_logo":1,"logo_path":"","logo_upload":"","default_favicon":1,"favicon_path":"","favicon_upload":""}'
+drush -l $island vset theme_seven_settings --format=json '{"toggle_logo":1,"toggle_name":0,"toggle_slogan":0,"toggle_node_user_picture":0,"toggle_comment_user_picture":0,"toggle_comment_user_verification":0,"toggle_favicon":1,"toggle_main_menu":1,"toggle_secondary_menu":1,"default_logo":1,"logo_path":"","logo_upload":"","default_favicon":1,"favicon_path":"","favicon_upload":""}'
+drush -l $island vset theme_williams_base_settings --format=json '{"toggle_logo":1,"toggle_name":0,"toggle_slogan":0,"toggle_node_user_picture":0,"toggle_comment_user_picture":0,"toggle_favicon":1,"toggle_main_menu":1,"toggle_secondary_menu":1,"default_logo":1,"logo_path":"","logo_upload":"","default_favicon":1,"favicon_path":"","favicon_upload":"","zen_breadcrumb":"no","zen_breadcrumb_separator":" \u203a ","zen_breadcrumb_home":1,"zen_breadcrumb_trailing":1,"zen_breadcrumb_title":0,"zen_skip_link_anchor":"main-menu","zen_skip_link_text":"Jump to navigation","zen_html5_respond_meta":{"respond":"respond","html5":"html5","meta":"meta"},"zen_rebuild_registry":1,"zen_wireframes":0}'
 
 
 
