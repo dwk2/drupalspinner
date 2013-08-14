@@ -287,9 +287,9 @@ drush -l $island en -y williams_ldap
 drush -l $island en -y pixture_reloaded_williams
 drush -l $island vset theme_default pixture_reloaded_williams
 # NOTE: SETUPNOTE- this is (currently) specific to Williams college; ideally this would be a generic islandora-compatible theme that could be easily customized to your institution and each site/project
-drush -l $island vset theme_settings --format=json '{"toggle_logo":1,"toggle_name":0,"toggle_slogan":0,"toggle_node_user_picture":0,"toggle_comment_user_picture":0,"toggle_comment_user_verification":0,"toggle_favicon":0,"toggle_main_menu":1,"toggle_secondary_menu":1,"default_logo":1,"logo_path":"","logo_upload":"","default_favicon":1,"favicon_path":"","favicon_upload":""}'
+# drush -l $island vset theme_settings --format=json '{"toggle_logo":1,"toggle_name":0,"toggle_slogan":0,"toggle_node_user_picture":0,"toggle_comment_user_picture":0,"toggle_comment_user_verification":0,"toggle_favicon":0,"toggle_main_menu":1,"toggle_secondary_menu":1,"default_logo":1,"logo_path":"","logo_upload":"","default_favicon":1,"favicon_path":"","favicon_upload":""}'
 drush -l $island vset theme_seven_settings --format=json '{"toggle_logo":1,"toggle_name":0,"toggle_slogan":0,"toggle_node_user_picture":0,"toggle_comment_user_picture":0,"toggle_comment_user_verification":0,"toggle_favicon":1,"toggle_main_menu":1,"toggle_secondary_menu":1,"default_logo":1,"logo_path":"","logo_upload":"","default_favicon":1,"favicon_path":"","favicon_upload":""}'
-# drush -l $island vset theme_williams_base_settings --format=json '{"toggle_logo":1,"toggle_name":0,"toggle_slogan":0,"toggle_node_user_picture":0,"toggle_comment_user_picture":0,"toggle_favicon":1,"toggle_main_menu":1,"toggle_secondary_menu":1,"default_logo":1,"logo_path":"","logo_upload":"","default_favicon":1,"favicon_path":"","favicon_upload":"","zen_breadcrumb":"no","zen_breadcrumb_separator":"u203a","zen_breadcrumb_home":1,"zen_breadcrumb_trailing":1,"zen_breadcrumb_title":0,"zen_skip_link_anchor":"main-menu","zen_skip_link_text":"Jump to navigation","zen_html5_respond_meta":{"respond":"respond","html5":"html5","meta":"meta"},"zen_rebuild_registry":1,"zen_wireframes":0}'
+# drush -l $island vset theme_williams_base_settings --format=json '{"toggle_logo":1,"toggle_name":0,"toggle_slogan":0,"toggle_node_user_picture":0,"toggle_comment_user_picture":0,"toggle_favicon":1,"toggle_main_menu":1,"toggle_secondary_menu":1,"default_logo":1,"logo_path":"","logo_upload":"","default_favicon":1,"favicon_path":"","favicon_upload":"","zen_breadcrumb":"no","zen_breadcrumb_separator":" \u203a ","zen_breadcrumb_home":1,"zen_breadcrumb_trailing":1,"zen_breadcrumb_title":0,"zen_skip_link_anchor":"main-menu","zen_skip_link_text":"Jump to navigation","zen_html5_respond_meta":{"respond":"respond","html5":"html5","meta":"meta"},"zen_rebuild_registry":1,"zen_wireframes":0}'
 
 
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
@@ -305,13 +305,20 @@ drush -l $island en -y williams_islandora_core
 drush -l $island fr -y williams_islandora_core
 drush -l $island dis -y toolbar # underlays admin menu, is confusing
 
+drush -l $island vset islandora_solr_primary_display default # need to set default display profile for search results.
+
 
 #############################################################################
 #***custom settings file to use shared tables.  This relies on having the DEFAULT_SETTINGS.txt file in the root of the main install.  May need to tweak the permissions and file ownership here as well***
 #############################################################################
+chmod -R 755 sites/$island/
 rm  sites/$island/settings.php
 cat $spinner_root_dir/DEFAULT_SETTINGS.txt | sed -e 's/$dbname/'"$dbname"'/' | sed -e 's/$dbuser/'"$dbuser"'/' | sed -e 's/$dbhost/'"$dbhost"'/' | sed -e 's/$dbpass/'"$dbpass"'/' >  sites/$island/settings.php
 
+################################
+# Set permissions on the files directory
+################################
+chmod -R 775 sites/$island/files
 
 #############################################################################
 #***create the symlink that makes the subdomain url work
