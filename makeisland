@@ -279,17 +279,14 @@ drush -l $island en -y williams_ldap
 
 
 #############################################################################
-#***default theme settings - this enables the WilliamsBaseD7 theme and sets it as default***
+#***default theme settings
 #############################################################################
-# consider the bootstrap theme
-# garland theme is the default - use that
-# drush -l $island en -y pixture_reloaded
+
 drush -l $island en -y pixture_reloaded_williams
 drush -l $island vset theme_default pixture_reloaded_williams
 # NOTE: SETUPNOTE- this is (currently) specific to Williams college; ideally this would be a generic islandora-compatible theme that could be easily customized to your institution and each site/project
 # drush -l $island vset theme_settings --format=json '{"toggle_logo":1,"toggle_name":0,"toggle_slogan":0,"toggle_node_user_picture":0,"toggle_comment_user_picture":0,"toggle_comment_user_verification":0,"toggle_favicon":0,"toggle_main_menu":1,"toggle_secondary_menu":1,"default_logo":1,"logo_path":"","logo_upload":"","default_favicon":1,"favicon_path":"","favicon_upload":""}'
 drush -l $island vset theme_seven_settings --format=json '{"toggle_logo":1,"toggle_name":0,"toggle_slogan":0,"toggle_node_user_picture":0,"toggle_comment_user_picture":0,"toggle_comment_user_verification":0,"toggle_favicon":1,"toggle_main_menu":1,"toggle_secondary_menu":1,"default_logo":1,"logo_path":"","logo_upload":"","default_favicon":1,"favicon_path":"","favicon_upload":""}'
-# drush -l $island vset theme_williams_base_settings --format=json '{"toggle_logo":1,"toggle_name":0,"toggle_slogan":0,"toggle_node_user_picture":0,"toggle_comment_user_picture":0,"toggle_favicon":1,"toggle_main_menu":1,"toggle_secondary_menu":1,"default_logo":1,"logo_path":"","logo_upload":"","default_favicon":1,"favicon_path":"","favicon_upload":"","zen_breadcrumb":"no","zen_breadcrumb_separator":" \u203a ","zen_breadcrumb_home":1,"zen_breadcrumb_trailing":1,"zen_breadcrumb_title":0,"zen_skip_link_anchor":"main-menu","zen_skip_link_text":"Jump to navigation","zen_html5_respond_meta":{"respond":"respond","html5":"html5","meta":"meta"},"zen_rebuild_registry":1,"zen_wireframes":0}'
 
 
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
@@ -301,11 +298,31 @@ drush -l $island en -y williams_islandora_hooks
 # drush -l $island en -y node_export_features
 drush -l $island en -y fe_block
 drush -l $island en -y strongarm
+# 
+# williams_islandora_core contains one-time initial install items.
+# this feature should not be reverted after the first install.
+# 
 drush -l $island en -y williams_islandora_core
 drush -l $island fr -y williams_islandora_core
+# 
+# williams_islandora_revertable contains configuration that should
+# always remain the same, and is therefore safe to revert in the
+# future (post-install)
+# 
+drush -l $island en -y williams_islandora_revertable
+drush -l $island fr -y williams_islandora_revertable
+
 drush -l $island dis -y toolbar # underlays admin menu, is confusing
 
+drush -l $island dis -y overlay
+
 drush -l $island vset islandora_solr_primary_display default # need to set default display profile for search results.
+
+drush -l $island en -y islandora_map_results
+
+drush -l $island en -y islandora_namespace_glossary
+
+drush -l $island en -y williams_islandora_namespacer
 
 
 #############################################################################

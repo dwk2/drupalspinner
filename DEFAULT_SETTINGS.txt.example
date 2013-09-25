@@ -38,6 +38,10 @@ $databases = array (
         ,'authmap'             => 'drupal_prime.'
         ,'ldap_authorization'  => 'drupal_prime.'
         ,'ldap_servers'        => 'drupal_prime.'
+        ,'taxonomy_index' => 'drupal_prime.'
+        ,'taxonomy_term_data' => 'drupal_prime.'
+        ,'taxonomy_term_hierarchy' => 'drupal_prime.'
+        ,'taxonomy_vocabulary' => 'drupal_prime.'
       ), 
     ),
   ),
