@@ -1,3 +1,10 @@
+THIS IS OBSOLETE AND DEPRECATED.
+
+USE THE NEWER "DRUSH-SITESPINNER" LOCATED ON THE ICG GITHUB SITE:
+https://github.com/Islandora-Collaboration-Group/drush-sitespinner
+
+THIS IS ONLY AN ARCHIVAL COPY... DELETE THIS COPY LATER.
+
 drupalspinner
 =============
 
